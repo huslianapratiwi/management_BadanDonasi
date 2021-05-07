@@ -1,15 +1,16 @@
 from tkinter import *
 from tkinter import ttk,messagebox
-from conector import *
+from conector import Databasepegawai as dbpegawai
 
 class Pegawai: 
-    def __init__(self,window):
+    def __init__(self,window,id_comp):
         self.window = window
         self.window.geometry("1120x480+450+300")
         self.window.title("Pegawai")
         self.window.config(bg="white")
 
         #variabel
+        self.var_idcomp = id_comp
         self.var_nama = StringVar()
         self.var_id = StringVar()
         self.var_telp = StringVar()
@@ -80,10 +81,10 @@ class Pegawai:
         if(self.var_id.get() == "" or self.var_nama.get() == "" or self.var_telp.get() == ""):
             messagebox.showwarning("Warning","Isi Semua Data!",parent=self.window)
         else :
-            if cekprimary(self.var_id.get()):
+            if dbpegawai.cekprimary(self.var_id.get()):
                 messagebox.showerror("Error","ID Pegawai sudah ada")
             else :
-                insert(self.var_id.get(),self.var_nama.get(),self.var_telp.get())
+                dbpegawai.insert(self.var_id.get(),self.var_nama.get(),self.var_telp.get(),self.var_idcomp)
                 messagebox.showinfo("Info","Data berhasil dimasukkan")
                 self.show()
                 self.clear()
@@ -94,7 +95,7 @@ class Pegawai:
         self.var_telp.set("")
 
     def show(self):
-        getrow = getdata()
+        getrow = dbpegawai.getdata(self.var_idcomp)
         self.TabelPegawai.delete(*self.TabelPegawai.get_children())
         for row in getrow:
             self.TabelPegawai.insert('',END,values=row)
@@ -114,7 +115,7 @@ class Pegawai:
             if not cekprimary(self.var_id.get()):
                 messagebox.showerror("Error","ID Pegawai belum ada")
             else :
-                update(self.var_id.get(),self.var_nama.get(),self.var_telp.get())
+                dbpegawai.update(self.var_id.get(),self.var_nama.get(),self.var_telp.get())
                 messagebox.showinfo("Info","Data berhasil diupdate")
                 self.show()
                 self.clear()
@@ -124,7 +125,7 @@ class Pegawai:
             if cekprimary(self.var_id.get()):
                 pilih = messagebox.askyesno("Delete data", "Apakah Kamu yakin untuk menghapus data dengan id "+self.var_id.get()+"?")
                 if pilih:
-                    delete_data(self.var_id.get(),self.var_nama.get(),self.var_telp.get())
+                    dbpegawai.delete_data(self.var_id.get(),self.var_nama.get(),self.var_telp.get())
                     self.show()
                     self.clear()
                 else:
@@ -137,7 +138,7 @@ class Pegawai:
 
 def start ():
     window = Tk()
-    objek = Pegawai(window)
+    objek = Pegawai(window,1)
     window.mainloop()
   
 if __name__ == '__main__':

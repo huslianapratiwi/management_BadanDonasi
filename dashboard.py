@@ -3,12 +3,13 @@ from pegawai import Pegawai
 from kotak_amal import Kotak_amal
   
 class Dashboard:
-    def __init__(self,window):
+    def __init__(self,window,id_comp):
         self.window = window
         self.window.geometry("1920x1080+0+0")
         self.window.title("Kartika Bisa")
         self.window.resizable (False,False)
         self.tampilan()
+        self.id_comp = id_comp
 
     def tampilan(self):
         title=Label(self.window,text = "Donasi Kartika",font=("times new roman",40,"bold"),bg = "#010c48",fg = "white").place(x = 0, y = 0,relwidth = 1,height = 70)
@@ -23,11 +24,11 @@ class Dashboard:
         btn_kotakAmal = Button(LeftMenu,text="Kotak Amal",command=self.Kotak_amal,font=("times new roman",20,"bold"),bd =3,bg="white",cursor="hand2").pack(side=TOP,fill=X)
         btn_Donasi = Button(LeftMenu,text="Donasi",font=("times new roman",20,"bold"),bd =3,bg="white",cursor="hand2").pack(side=TOP,fill=X)
         btn_Donatur = Button(LeftMenu,text="Donatur",font=("times new roman",20,"bold"),bd =3,bg="white",cursor="hand2").pack(side=TOP,fill=X)
-        btn_Di_donasi = Button(LeftMenu,text="Di Donasi",font=("times new roman",20,"bold"),bd =3,bg="white",cursor="hand2").pack(side=TOP,fill=X)
+        btn_penerima = Button(LeftMenu,text="Penerima",font=("times new roman",20,"bold"),bd =3,bg="white",cursor="hand2").pack(side=TOP,fill=X)
 
     def employee(self):
         self.new_win = Toplevel(self.window)
-        self.new_obj = Pegawai(self.new_win)
+        self.new_obj = Pegawai(self.new_win,self.id_comp)
 
     def Kotak_amal(self):
         self.new_win = Toplevel(self.window)
