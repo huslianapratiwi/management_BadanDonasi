@@ -46,7 +46,8 @@ class login_amal:
             if self.var_username.get() == real_user[0]:
                 if self.var_password.get() == real_pass[0]:
                     nilai = messagebox.showinfo("Berhasil","Login Berhasil")
-                    login_amal.id_company = dblogin.getdata("id_company",self.var_username.get())
+                    temp = dblogin.getdata("id_company",self.var_username.get())
+                    login_amal.id_company = temp[0]
                     if nilai : 
                          self.dashboard()
             else :
@@ -75,8 +76,9 @@ class login_donatur(login_amal):
             if self.var_username.get() == real_user[0]:
                 if self.var_password.get() == real_pass[0]:
                     nilai = messagebox.showinfo("Berhasil","Login Berhasil")
-                    login_donatur.id_donatur = dblogin.getdata_donatur("id_donatur",self.var_username.get())
-                    if nilai : 
+                    temp = dblogin.getdata_donatur("id_donatur",self.var_username.get())
+                    login_donatur.id_donatur = temp[0]
+                    if nilai :  
                          self.Donasi()
             else :
                 messagebox.showwarning("warning","username tidak ada")

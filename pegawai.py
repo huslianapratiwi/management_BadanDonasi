@@ -14,7 +14,12 @@ class Pegawai:
         self.var_nama = StringVar()
         self.var_id = StringVar()
         self.var_telp = StringVar()
+        self.tanggal = StringVar()
+        self.bulan = StringVar()
+        self.tahun = StringVar()
+        self.date = str()
         self.tampilan()
+        print(self.var_idcomp)
 
     def tampilan(self):
 
@@ -31,6 +36,7 @@ class Pegawai:
 
         submit_search = Button(Searchframe,command=self.show,text="Search",bg="blue",fg="white",font=("times new roman",12,"bold"))
         submit_search.place(x=400,y=10,width=90,height = 30)
+        
 
         #input
         inputframe=LabelFrame(self.window,text="Input Pegawai",bg="white")
@@ -45,16 +51,24 @@ class Pegawai:
         no_telepon= Entry(inputframe,textvariable=self.var_telp).place(x=120,y=100)
         lbl_no_telepon = Label(inputframe,text = "No Telephon",bg="white").place(x = 10,y = 100)
 
-        #perbutonnan
+        lbl_tgl_masuk = Label(inputframe,text = "Tanggal Masuk",bg="white").place(x = 10,y = 140)
+        tanggal = Entry(inputframe,textvariable=self.tanggal,width=4).place(x=120,y=140)
+        self.tanggal.set("dd")
+        bulan = Entry(inputframe,textvariable=self.bulan,width=4).place(x=170,y=140)
+        self.bulan.set("mm")
+        bulan = Entry(inputframe,textvariable=self.tahun,width=7).place(x=220,y=140)
+        self.tahun.set("yyyy")
+
+        #perbutonnans
 
         submit = Button (inputframe,text = "Submit",bg="green",fg ="white",command =self.submit,font=("times new roman",12,"bold"))
-        submit.place(x=200,y=170)
+        submit.place(x=200,y=200)
 
         update = Button (inputframe,text = "Update",bg="blue",fg ="white",command=self.update,font=("times new roman",12,"bold"))
-        update.place(x=300,y=170)
+        update.place(x=300,y=200)
 
         delete = Button (inputframe,text = "Delete",bg="red",fg ="white",command=self.delete,font=("times new roman",12,"bold"))
-        delete.place(x=400,y=170)
+        delete.place(x=400,y=200)
 
         #tabel
         title=Label(self.window,text = "Data Pegawai",font=("times new roman",20,"bold"),bg = "white",fg = "black").place(x = 600 , y = 30,height=50)
@@ -78,13 +92,14 @@ class Pegawai:
         self.show()
 
     def submit(self):
+        self.date = str(self.tahun.get()) + '-' + str(self.bulan.get()) + '-' + str(self.tanggal.get())
         if(self.var_id.get() == "" or self.var_nama.get() == "" or self.var_telp.get() == ""):
             messagebox.showwarning("Warning","Isi Semua Data!",parent=self.window)
         else :
             if dbpegawai.cekprimary(self.var_id.get()):
                 messagebox.showerror("Error","ID Pegawai sudah ada")
             else :
-                dbpegawai.insert(self.var_id.get(),self.var_nama.get(),self.var_telp.get(),self.var_idcomp)
+                dbpegawai.insert(self.var_id.get(),self.var_nama.get(),self.var_telp.get(),self.date,self.var_idcomp)
                 messagebox.showinfo("Info","Data berhasil dimasukkan")
                 self.show()
                 self.clear()
@@ -93,6 +108,9 @@ class Pegawai:
         self.var_id.set("")
         self.var_nama.set("")
         self.var_telp.set("")
+        self.tanggal.set("dd")
+        self.bulan.set("mm")
+        self.tahun.set("yyyy")
 
     def show(self):
         getrow = dbpegawai.getdata(self.var_idcomp)
@@ -112,7 +130,7 @@ class Pegawai:
         if(self.var_id.get() == ""):
             messagebox.showwarning("Warning","Data Primary belum diisi !",parent=self.window)
         else :
-            if not cekprimary(self.var_id.get()):
+            if not dbpegawai.cekprimary(self.var_id.get()):
                 messagebox.showerror("Error","ID Pegawai belum ada")
             else :
                 dbpegawai.update(self.var_id.get(),self.var_nama.get(),self.var_telp.get())
@@ -122,7 +140,7 @@ class Pegawai:
 
     def delete(self):
         if(not self.var_id.get() == ""):
-            if cekprimary(self.var_id.get()):
+            if dbpegawai.cekprimary(self.var_id.get()):
                 pilih = messagebox.askyesno("Delete data", "Apakah Kamu yakin untuk menghapus data dengan id "+self.var_id.get()+"?")
                 if pilih:
                     dbpegawai.delete_data(self.var_id.get(),self.var_nama.get(),self.var_telp.get())

@@ -23,10 +23,10 @@ class Databasepegawai:
     else :
       return False
 
-  def insert(id,nama,no_telp,id_comp):
+  def insert(id,nama,no_telp,tgl,id_comp):
     cursor = db.cursor()
-    sql = "INSERT INTO Pegawai (id_pegawai,nama,no_telepon,id_company) VALUES (%s,%s,%s,%s)"
-    val = (id,nama,no_telp,id_comp)
+    sql = "INSERT INTO Pegawai (id_pegawai,nama,no_telepon,tgl_masuk,id_company) VALUES (%s,%s,%s,%s,%s)"
+    val = (id,nama,no_telp,tgl,id_comp)
     cursor.execute(sql, val)
     db.commit()
     print("{} data ditambahkan".format(cursor.rowcount))

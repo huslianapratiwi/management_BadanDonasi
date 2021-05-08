@@ -5,6 +5,7 @@ from kotak_amal import Kotak_amal
 class Dashboard:
     def __init__(self,window,id_comp):
         self.window = window
+        print(id_comp)
         self.window.geometry("1920x1080+0+0")
         self.window.title("Kartika Bisa")
         self.window.resizable (False,False)
@@ -39,7 +40,7 @@ class Dashboard:
 
 def win ():
     window = Tk()
-    Dashboard(window)
+    Dashboard(window,1)
     window.mainloop()
   
 if __name__ == '__main__':
