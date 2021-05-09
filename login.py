@@ -1,8 +1,8 @@
 from tkinter import *
 from tkinter import ttk, messagebox
-from dashboard import Dashboard
+import dashboard
 from register import *
-from Donasi import donasi
+import Donatur
 from conector import dblogin as dblogin
 
 class login_amal:
@@ -54,8 +54,8 @@ class login_amal:
                 messagebox.showwarning("warning","username tidak ada")
 
     def dashboard(self): 
-        self.new_win = Toplevel(self.window)
-        self.new_obj = Dashboard(self.new_win,login_amal.id_company)
+        self.window.destroy()
+        dashboard.win(login_amal.id_company)
 
 class login_donatur(login_amal):
     id_donatur = int()
@@ -84,13 +84,16 @@ class login_donatur(login_amal):
                 messagebox.showwarning("warning","username tidak ada")
 
     def Donasi(self): 
-        self.new_win = Toplevel(self.window)
-        self.new_obj = donasi(self.new_win,login_donatur.id_donatur)
+        self.window.destroy()
+        Donatur.win(login_donatur.id_donatur)
+        
 
-
-def win ():
+def win (gets):
     window = Tk()
-    login_donatur(window)
+    if gets == "badan":
+        login_amal(window)
+    else:
+        login_donatur(window)
     window.mainloop()
   
 if __name__ == '__main__':
