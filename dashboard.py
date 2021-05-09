@@ -1,11 +1,9 @@
 from tkinter import *
-from pegawai import Pegawai
-from kotak_amal import Kotak_amal
+from Badan_amal import *
   
 class Dashboard:
     def __init__(self,window,id_comp):
         self.window = window
-        print(id_comp)
         self.window.geometry("1920x1080+0+0")
         self.window.title("Kartika Bisa")
         self.window.resizable (False,False)
@@ -18,7 +16,7 @@ class Dashboard:
         
         ##frame left
         LeftMenu = Frame(self.window,bd=2,relief=RIDGE, bg="white")
-        LeftMenu.place(x=0,y=70,width=200,height=700)
+        LeftMenu.place(x=0,y=70,width=200,height=1080)
 
         lbl_Menu = Label(LeftMenu,text="MENU",font=("times new roman",20,"bold"),bd =3,bg="green").pack(side=TOP,fill=X)
         btn_Pegawai = Button(LeftMenu,text="Pegawai",command=self.employee,font=("times new roman",20,"bold"),bd =3,bg="white",cursor="hand2").pack(side=TOP,fill=X)
@@ -33,15 +31,15 @@ class Dashboard:
 
     def Kotak_amal(self):
         self.new_win = Toplevel(self.window)
-        self.new_obj = Kotak_amal(self.new_win)
-    
+        self.new_obj = Kotak_amal(self.new_win,self.id_comp)
+
     def exit(self):
         self.window.destroy()
 
-def win ():
+def win (id_company):
     window = Tk()
-    Dashboard(window,1)
+    Dashboard(window,id_company)
     window.mainloop()
   
 if __name__ == '__main__':
-        win()
+        win(1)

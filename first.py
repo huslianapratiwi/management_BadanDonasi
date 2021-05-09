@@ -1,5 +1,6 @@
 from tkinter import *
 from login import *
+import login
 
 class Menu_awal:
     def __init__(self,window):
@@ -20,12 +21,12 @@ class Menu_awal:
         bdn_aml.place(x=500,y=300)
 
     def donatur(self):
-        self.new_win = Toplevel(self.window)
-        self.new_obj = login_donatur(self.new_win)
+        self.window.destroy()
+        login.win("donatur")
         
     def Badan_amal(self):
-        self.new_win = Toplevel(self.window)
-        self.new_obj = login_amal(self.new_win)
+        self.window.destroy()
+        login.win("badan")
 
     def exit(self):
         self.window.destroy()
