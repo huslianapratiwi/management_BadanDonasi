@@ -44,7 +44,9 @@ class register_badan:
                 messagebox.showwarning("Warning","Username sudah ada",parent=self.window)
             else :
                 dbregis.insert_badan(self.var_nama.get(),self.var_username.get(),self.var_password.get(),self.var_alamat.get())
-                messagebox.showinfo("Info","Data berhasil dimasukkan")
+                temp = messagebox.showinfo("Info","Berhasil Melakukan Registrasi")
+                if (temp):
+                    self.exit()
 
     def exit(self):
         self.window.destroy()
@@ -102,7 +104,9 @@ class register_donasi:
                 messagebox.showwarning("Warning","Username sudah ada",parent=self.window)
             else :
                 dbregis.insert_donatur(self.var_nama.get(),self.var_username.get(),self.var_password.get(),self.var_alamat.get(),self.var_notelp.get(),self.var_tipe.get())
-                messagebox.showinfo("Info","Data berhasil dimasukkan")
+                x = messagebox.showinfo("Info","Berhasil Registrasi")
+                if(x):
+                    self.exit()
 
 
     def exit(self):

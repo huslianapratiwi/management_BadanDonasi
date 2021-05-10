@@ -234,10 +234,10 @@ class Kotak_amal:
         submit = Button (inputframe,command = self.Submit,text = "Submit",bg="green",fg ="white",font=("times new roman",12,"bold"))
         submit.place(x=200,y=200)
 
-        update = Button (inputframe,text = "Update",bg="blue",fg ="white",font=("times new roman",12,"bold"))
+        update = Button (inputframe,command = self.Update,text = "Update",bg="blue",fg ="white",font=("times new roman",12,"bold"))
         update.place(x=300,y=200)
 
-        delete = Button (inputframe,text = "Delete",bg="red",fg ="white",font=("times new roman",12,"bold"))
+        delete = Button (inputframe,command = self.Delete,text = "Delete",bg="red",fg ="white",font=("times new roman",12,"bold"))
         delete.place(x=400,y=200)
 
         #tabel
@@ -273,16 +273,7 @@ class Kotak_amal:
 
         self.show()
     
-    def Submit(self):
-        """self.var_idkotak= StringVar()
-        self.var_id_company = id_comp
-        self.var_id_pegawai = StringVar()
-        self.var_nama = StringVar()
-        self.var_alamat = StringVar()
-        self.var_jumlah = StringVar()
-        self.date = time.strftime('%Y%m%d')
-        self.tampilan()"""
-        
+    def Submit(self):   
         if(self.var_idkotak.get() == ""):
             messagebox.showwarning("Warning","Isi Semua Data!",parent=self.window)
         else :
@@ -302,6 +293,32 @@ class Kotak_amal:
         self.var_alamat.set("")
         self.var_jumlah.set("")
     
+    def Update(self):
+        if self.var_idkotak.get() == "":
+            messagebox.showwarning("Warning","Data Primary Harus diisi !",parent=self.window)
+        else :
+            if not dbkotak.cekprimary(self.var_idkotak.get()):
+                messagebox.showerror("Error","ID Kotak belum ada")
+            else :
+                dbkotak.update(self.var_idkotak.get(),self.var_id_pegawai.get(),self.var_alamat.get(),self.var_jumlah.get())
+                messagebox.showinfo("Info","Data berhasil diupdate")
+                self.show()
+                self.clear()
+                
+    def Delete(self):
+        if not self.var_idkotak.get() == "":
+            if dbkotak.cekprimary(self.var_idkotak.get()):
+                pilih = messagebox.askyesno("Delete data", "Apakah Kamu yakin untuk menghapus data dengan id "+self.var_idkotak.get()+"?")
+                if pilih:
+                    dbkotak.delete_data(self.var_idkotak.get())
+                    self.show()
+                    self.clear()
+                else:
+                    pass
+            else :
+                messagebox.showerror("Error","ID Kotak tidak ada")
+        else : 
+            messagebox.showwarning("Warning","Data belum diisi !",parent=self.window)
 
     def show(self):
         getrow = dbkotak.getdata(self.var_id_company)
@@ -315,8 +332,8 @@ class Kotak_amal:
         row = content['values']
         self.var_idkotak.set(row[0])
         self.var_id_pegawai.set(row[1])
-        self.var_alamat.set(row[2])
-        self.var_jumlah.set(row[3])
+        self.var_alamat.set(row[3])
+        self.var_jumlah.set(row[4])
 
 def start ():
     window = Tk()
