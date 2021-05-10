@@ -9,6 +9,7 @@ class Dashboard:
         self.window.resizable (False,False)
         self.tampilan()
         self.id_comp = id_comp
+        
 
     def tampilan(self):
         title=Label(self.window,text = "Donasi Kartika",font=("times new roman",40,"bold"),bg = "#010c48",fg = "white").place(x = 0, y = 0,relwidth = 1,height = 70)
