@@ -43,10 +43,19 @@ class register_badan:
             if dbregis.cekada_badan("username",self.var_username.get()):
                 messagebox.showwarning("Warning","Username sudah ada",parent=self.window)
             else :
-                dbregis.insert_badan(self.var_nama.get(),self.var_username.get(),self.var_password.get(),self.var_alamat.get())
-                temp = messagebox.showinfo("Info","Berhasil Melakukan Registrasi")
-                if (temp):
-                    self.exit()
+                if len(self.var_username.get()) > 15: 
+                    messagebox.showwarning("Warning","Username Terlalu Panjang",parent=self.window)
+                elif len(self.var_password.get()) > 15: 
+                    messagebox.showwarning("Warning","Password Terlalu Panjang",parent=self.window)
+                elif len(self.var_nama.get()) > 15: 
+                    messagebox.showwarning("Warning","Nama Terlalu Panjang",parent=self.window)
+                elif len(self.var_alamat.get()) > 15: 
+                    messagebox.showwarning("Warning","Alamat Terlalu Panjang",parent=self.window)
+                else : 
+                    dbregis.insert_badan(self.var_nama.get(),self.var_username.get(),self.var_password.get(),self.var_alamat.get())
+                    temp = messagebox.showinfo("Info","Berhasil Melakukan Registrasi")
+                    if (temp):
+                        self.exit()
 
     def exit(self):
         self.window.destroy()
@@ -103,10 +112,19 @@ class register_donasi:
             if dbregis.cekada_dntr("username",self.var_username.get()):
                 messagebox.showwarning("Warning","Username sudah ada",parent=self.window)
             else :
-                dbregis.insert_donatur(self.var_nama.get(),self.var_username.get(),self.var_password.get(),self.var_alamat.get(),self.var_notelp.get(),self.var_tipe.get())
-                x = messagebox.showinfo("Info","Berhasil Registrasi")
-                if(x):
-                    self.exit()
+                if len(self.var_username.get()) > 20: 
+                    messagebox.showwarning("Warning","Username Terlalu Panjang",parent=self.window)
+                elif len(self.var_password.get()) > 20: 
+                    messagebox.showwarning("Warning","Password Terlalu Panjang",parent=self.window)
+                elif len(self.var_nama.get()) > 30: 
+                    messagebox.showwarning("Warning","Nama Terlalu Panjang",parent=self.window)
+                elif len(self.var_alamat.get()) > 40: 
+                    messagebox.showwarning("Warning","Alamat Terlalu Panjang",parent=self.window)
+                else : 
+                    dbregis.insert_donatur(self.var_nama.get(),self.var_username.get(),self.var_password.get(),self.var_alamat.get(),self.var_notelp.get(),self.var_tipe.get())
+                    x = messagebox.showinfo("Info","Berhasil Registrasi")
+                    if(x):
+                        self.exit()
 
 
     def exit(self):

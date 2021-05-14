@@ -39,6 +39,15 @@ class Databasepegawai:
     results = cursor.fetchall()
     return(results)
 
+  def getsearch(id_comp,conteks,hasil):
+    cursor = db.cursor()
+    like = ("%" + str(hasil) + "%")
+    sql = """select id_pegawai,nama,no_telepon,tgl_masuk, FLOOR(DATEDIFF(CURRENT_DATE(),tgl_masuk)/365) from Pegawai where id_company = '%s' and %s like '%s' ;""" % (id_comp,conteks,like)
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    print(results)
+    return results
+
   def update(id,nama,no_telp):
     cursor = db.cursor()
     sql = "update Pegawai set nama =%s, no_telepon =%s where id_pegawai =%s" 
@@ -224,6 +233,14 @@ class Databasekotakamal:
     cursor.execute(sql)
     db.commit()
     print("Data berhasil dibapus")
+  
+  def getsearch(id_comp,conteks,hasil):
+    cursor = db.cursor()
+    kunci = "%" + str(hasil) + "%"
+    sql = """select id_kotak,id_pegawai,nama,alamat,jumlah_uang,tgl_penarikan from Kotak_amal natural join Pegawai where id_company = '%s' and %s like '%s' """ % (id_comp,conteks,kunci)
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    return(results)
 
 class dbdonatur: 
   def getnama(id):
@@ -232,3 +249,253 @@ class dbdonatur:
     cursor.execute(sql)
     data = cursor.fetchall()
     return data
+
+class DatabasePenerima:
+
+
+  def insert(id_pegawai,id_comp,nama,alamat,telp1,telp2):
+    id_penerima = 1
+    while (DatabasePenerima.cekprimary(id_penerima)):
+      id_penerima += 1 
+    cursor = db.cursor()
+    sql = """insert into Penerima (id_pegawai,id_company,id_penerima,nama,alamat) values  (%s,%s,%s,%s, %s ) """
+    var = (id_pegawai,id_comp,id_penerima,nama,alamat)
+    cursor.execute(sql, var)
+    db.commit()
+    DatabasePenerima.insert_phone(id_penerima,telp1)
+    if(telp2 != "") :
+      DatabasePenerima.insert_phone(id_penerima,telp2)
+    print("berhasil")
+  
+  def insert_phone(id,telp):
+    id_ponsel = 1
+    while (DatabasePenerima.cekprimary_hp(id_ponsel)):
+      id_ponsel +=1
+    cursor = db.cursor()
+    sql = "insert into Ponsel_penerima (id_penerima,id_nomor_hp,nomor_hp) values (%s,%s,'%s')" % (id,id_ponsel,telp)
+    cursor.execute(sql)
+    db.commit()
+
+  def cekprimary(id):
+    cursor = db.cursor()
+    sql = "select * from Penerima where id_penerima = %s" % (id)
+    cursor.execute(sql)
+    data = cursor.fetchone()
+    if data != None : 
+      return True
+    else :
+      return False
+
+  def cekprimary_hp(id):
+    cursor = db.cursor()
+    sql = "select * from Ponsel_penerima where id_nomor_hp = %s" % (id)
+    cursor.execute(sql)
+    data = cursor.fetchone()
+    if data != None : 
+      return True
+    else :
+      return False
+
+  def getdata(id):
+    cursor = db.cursor()
+    sql = """select Penerima.id_penerima,Pegawai.nama,Penerima.nama,Penerima.alamat,GROUP_CONCAT(Ponsel_penerima.nomor_hp) as no_hp from Penerima join Pegawai join Ponsel_penerima where Penerima.id_pegawai = Pegawai.id_pegawai and Ponsel_penerima.id_penerima = Penerima.id_penerima and Penerima.id_company = %s GROUP BY Penerima.id_penerima """ % (id)
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    hasil = []
+    if results != None :
+      for i in range (len(results)):
+        phone = results[i][4].split(',')
+        list = []
+        for j in range (len(results[i])-1) :
+          list.append(results[i][j])
+        list.append(str(phone[0]))
+        if len(phone) > 1 :
+          list.append( str(phone[1]))
+        hasil.append(list)
+        
+      return hasil
+
+  def search_nama(nama,id_comp):
+    cursor = db.cursor(buffered = True)
+    sql = """Select Penerima.id_pegawai from Penerima join Pegawai WHERE Penerima.id_pegawai = Pegawai.id_pegawai and Pegawai.nama = (%s) and Penerima.id_company = (%s) """ 
+    var = (nama,id_comp)
+    cursor.execute(sql, var)
+    data = cursor.fetchone()
+    return data[0] 
+
+  def getprimary(nama):
+    cursor = db.cursor()
+    sql = """SELECT id_penerima from Penerima where nama ='%s' """ % (nama)
+    cursor.execute(sql)
+    data = cursor.fetchone()
+    return data
+ 
+  def delete(id):
+    cursor = db.cursor()
+    sql = "Delete from Ponsel_penerima where id_penerima =%s" % (id)
+    cursor.execute(sql)
+    db.commit()
+    sql1 = "Delete from Penerima where id_penerima =%s" % (id)
+    cursor.execute(sql1)
+    db.commit()
+
+  def update(id,pegawai,comp,nama,alamat,telp1,telp2):
+    cursor = db.cursor()
+    sql = """UPDATE Penerima set id_pegawai = %s, nama = %s,alamat = %s where id_penerima = %s and id_company = %s""" 
+    var = (pegawai,nama,alamat,id,comp)
+    cursor.execute(sql, var)
+    db.commit()
+
+    list_phone = DatabasePenerima.getphoneid(id)
+    DatabasePenerima.update_ponsel(list_phone[0][0],telp1)
+    if (len(list_phone) > 1):
+      DatabasePenerima.update_ponsel(list_phone[1][0],telp2)
+
+  def getphoneid(id):
+      cursor = db.cursor()
+      sql = "select id_nomor_hp from Ponsel_penerima where id_penerima = %s " % id
+      cursor.execute(sql)
+      data = cursor.fetchall()
+      return data 
+
+  def update_ponsel(id,telp):
+    cursor = db.cursor()
+    sql = "update Ponsel_penerima set nomor_hp = '%s' where id_nomor_hp = %s " % (telp,id)
+    cursor.execute(sql)
+    db.commit()
+  
+  def getsearch(id,conteks,hasil):
+    cursor = db.cursor()
+    kunci = "%" + str(hasil) + "%"
+    sql = """select Penerima.id_penerima,Pegawai.nama,Penerima.nama,Penerima.alamat,GROUP_CONCAT(Ponsel_penerima.nomor_hp) as no_hp from Penerima join Pegawai join Ponsel_penerima where Penerima.id_pegawai = Pegawai.id_pegawai and Ponsel_penerima.id_penerima = Penerima.id_penerima and Penerima.id_company = %s and %s like '%s' GROUP BY Penerima.id_penerima """ % (id,conteks,kunci)
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    hasil = []
+    if results != None :
+      for i in range (len(results)):
+        phone = results[i][4].split(',')
+        list = []
+        for j in range (len(results[i])-1) :
+          list.append(results[i][j])
+        list.append(str(phone[0]))
+        if len(phone) > 1 :
+          list.append( str(phone[1]))
+        hasil.append(list)
+        
+      return hasil
+
+class DatabaseRiwayat:
+  def getdata(id):
+    cursor = db.cursor()
+    sql = """select Donasi.id_donasi,Donatur.nama,jumlah_total,tgl_donasi,Badan_amal.nama from Donasi join Donatur join Badan_amal join Uang where Donasi.id_donasi = Uang.id_donasi and Donasi.id_company = Badan_amal.id_company and Donatur.id_donatur = Donasi.id_donatur and Donasi.id_donatur = %s  ORDER BY Donasi.id_donasi ASC """ % (id)
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    return results
+  
+  def getdatabarang(id):
+    cursor = db.cursor()
+    sql = """select Donasi.id_donasi,Donatur.nama,jenis,jumlah,tgl_donasi,Badan_amal.nama from Donasi join Donatur join Badan_amal join Barang where Donasi.id_donasi = Barang.id_donasi and Donasi.id_company = Badan_amal.id_company and Donatur.id_donatur = Donasi.id_donatur and Donasi.id_donatur = %s  ORDER BY Donasi.id_donasi ASC """ % (id)
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    return results
+
+  def getsearchuang(id,konteks,hasil):
+    cursor = db.cursor()
+    kunci = "%" + str(hasil) + "%"
+    sql = """select Donasi.id_donasi,Donatur.nama,jumlah_total,tgl_donasi,Badan_amal.nama from Donasi join Donatur join Badan_amal join Uang where Donasi.id_donasi = Uang.id_donasi and Donasi.id_company = Badan_amal.id_company and Donatur.id_donatur = Donasi.id_donatur and Donasi.id_donatur = %s and %s like '%s' ORDER BY Donasi.id_donasi ASC """ % (id,konteks,kunci)
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    return results
+
+  def getsearchbarang(id,konteks,hasil):
+    cursor = db.cursor()
+    kunci = "%" + str(hasil) + "%"
+    sql = """select Donasi.id_donasi,Donatur.nama,jenis,jumlah,tgl_donasi,Badan_amal.nama from Donasi join Donatur join Badan_amal join Barang where Donasi.id_donasi = Barang.id_donasi and Donasi.id_company = Badan_amal.id_company and Donatur.id_donatur = Donasi.id_donatur and Donasi.id_donatur = %s and %s like '%s'  ORDER BY Donasi.id_donasi ASC """ % (id,konteks,kunci)
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    return results
+
+class DatabaseDonasi:
+  
+  def getdata(id):
+    cursor = db.cursor()
+    sql = """select Donasi.id_donasi,Donatur.nama,jumlah_total,tgl_donasi from Donasi join Donatur join Badan_amal join Uang where Donasi.id_donasi = Uang.id_donasi and Donasi.id_company = Badan_amal.id_company and Donatur.id_donatur = Donasi.id_donatur and Donasi.id_company = %s  ORDER BY Donasi.id_donasi ASC """ % (id)
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    return results
+  
+  def getdatabarang(id):
+    cursor = db.cursor()
+    sql = """select Donasi.id_donasi,Donatur.nama,jenis,jumlah,tgl_donasi from Donasi join Donatur join Badan_amal join Barang where Donasi.id_donasi = Barang.id_donasi and Donasi.id_company = Badan_amal.id_company and Donatur.id_donatur = Donasi.id_donatur and Donasi.id_company = %s  ORDER BY Donasi.id_donasi ASC """ % (id)
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    return results
+  
+  def getsearchuang(id,konteks,hasil):
+    cursor = db.cursor()
+    kunci = "%" + str(hasil) + "%"
+    sql = """select Donasi.id_donasi,Donatur.nama,jumlah_total,tgl_donasi from Donasi join Donatur join Badan_amal join Uang where Donasi.id_donasi = Uang.id_donasi and Donasi.id_company = Badan_amal.id_company and Donatur.id_donatur = Donasi.id_donatur and Donasi.id_company = %s and %s like '%s'  ORDER BY Donasi.id_donasi ASC """ % (id,konteks,kunci)
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    return results
+
+  def getsearchbarang(id,konteks,hasil):
+    cursor = db.cursor()
+    kunci = "%" + str(hasil) + "%"
+    sql = """select Donasi.id_donasi,Donatur.nama,jenis,jumlah,tgl_donasi from Donasi join Donatur join Badan_amal join Barang where Donasi.id_donasi = Barang.id_donasi and Donasi.id_company = Badan_amal.id_company and Donatur.id_donatur = Donasi.id_donatur and Donasi.id_company = %s and %s like '%s' ORDER BY Donasi.id_donasi ASC """ % (id,konteks,kunci)
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    return results
+
+class DatabaseDonatur:
+  
+  def getdata(id):
+    cursor = db.cursor()
+    sql = """select Donatur.id_donatur,Donatur.nama,Donatur.username,Donatur.alamat,Donatur.no_telepon,Donatur.tipe from Donatur join Donasi join Badan_amal where Donatur.id_donatur = Donasi.id_donasi and Badan_amal.id_company = Donasi.id_company and Badan_amal.id_company = %s """ % (id)
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    return results
+  
+  def getsearch(id,konteks,hasil):
+    cursor = db.cursor()
+    kunci = "%" + str(hasil) + "%"
+    sql = """select Donatur.id_donatur,Donatur.nama,Donatur.username,Donatur.alamat,Donatur.no_telepon,Donatur.tipe from Donatur join Donasi join Badan_amal where Donatur.id_donatur = Donasi.id_donasi and Badan_amal.id_company = Donasi.id_company and Badan_amal.id_company = %s and %s like '%s' """ % (id,konteks,kunci)
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    return results
+
+class DatabaseDiagram:
+  def gettanggal_donasi(id_comp,date):
+    cursor = db.cursor()
+    sql = """select count(tgl_donasi) from Donasi where id_company = %s and tgl_donasi = '%s'  """ % (id_comp,date)
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    return results[0][0]
+  
+  def getexperience(id_comp,exp):
+    cursor = db.cursor()
+    sql = """select count(FLOOR(DATEDIFF(CURRENT_DATE(),tgl_masuk)/365)) from Pegawai where id_company = %s and FLOOR(DATEDIFF(CURRENT_DATE(),tgl_masuk)/365) = %s """ % (id_comp,exp)
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    return results[0][0]
+
+  def gettanggal_user(id_dntr,date):
+    cursor = db.cursor()
+    sql = """select count(tgl_donasi) from Donasi where id_donatur= %s and tgl_donasi = '%s'  """ % (id_dntr,date)
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    return results[0][0]
+  
+  def getjenis(id_comp,Jenis):
+    cursor = db.cursor()
+    sql = """select count(jenis),jenis from Donasi natural join Barang where id_company = %s and jenis = '%s'  """ % (id_comp,Jenis)
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    return results
+  
+  def getjenisuser(id_dntr,Jenis):
+    cursor = db.cursor()
+    sql = """select count(jenis),jenis from Donasi natural join Barang where id_donatur= %s and jenis = '%s'  """ % (id_dntr,Jenis)
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    return results
