@@ -499,3 +499,11 @@ class DatabaseDiagram:
     cursor.execute(sql)
     results = cursor.fetchall()
     return results
+
+class DatabaseBadan_amal:
+  def getnama(id):
+    cursor = db.cursor()
+    sql = "Select nama from Badan_amal where id_company = %s " % (id)
+    cursor.execute(sql)
+    results = cursor.fetchone()
+    return results[0]

@@ -4,6 +4,7 @@ from conector import donasi_uang
 from conector import donasi_barang as dbdonasi_barang
 from conector import DatabaseRiwayat as dbriwayat
 
+
 class donasi:
     def __init__(self,window,id_dntr):
         self.window = window

@@ -4,6 +4,7 @@ from Badan_amal import *
 import matplotlib.pyplot as plt
 from pandas import DataFrame
 from conector import DatabaseDiagram as dbDiagram
+from conector import DatabaseBadan_amal as dbBadanamal
 import datetime
 import tkinter as tk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -11,29 +12,30 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 class Dashboard:
     def __init__(self,window,id_comp):
         self.window = window
-        self.window.geometry("1920x1080+0+0")
+        self.window.geometry("1280x720+0+0")
         self.window.title("Kartika Bisa")
         self.window.resizable (False,False)
         self.id_comp = id_comp
+        self.nama = dbBadanamal.getnama(id_comp)
         self.tampilan()
         
 
     def tampilan(self):
-        title=Label(self.window,text = "Donasi Kartika",font=("times new roman",40,"bold"),bg = "#010c48",fg = "white").place(x = 0, y = 0,relwidth = 1,height = 70)
-        btn_logout=Button(self.window,text="Logout",command=self.exit,font = ("times new roman",15,"bold"),bg="yellow",cursor="hand2").place(x=1700,y = 20,height = 30, width = 150)
+        title=Label(self.window,text = self.nama,font=("times new roman",30,"bold"),bg = "#010c48",fg = "white").place(x = 0, y = 0,relwidth = 1,height = 70)
+        btn_logout=Button(self.window,text="Logout",command=self.exit,font = ("times new roman",15,"bold"),bg="yellow",cursor="hand2").place(x=1100,y = 20,height = 30, width = 150)
         
         ##frame left
         LeftMenu = Frame(self.window,bd=2,relief=RIDGE, bg="white")
-        LeftMenu.place(x=0,y=70,width=200,height=1080)
+        LeftMenu.place(x=0,y=70,width=150,height=720)
 
-        lbl_Menu = Label(LeftMenu,text="MENU",font=("times new roman",20,"bold"),bd =3,bg="green").pack(side=TOP,fill=X)
-        btn_Pegawai = Button(LeftMenu,text="Pegawai",command=self.employee,font=("times new roman",20,"bold"),bd =3,bg="white",cursor="hand2").pack(side=TOP,fill=X)
-        btn_kotakAmal = Button(LeftMenu,text="Kotak Amal",command=self.Kotak_amal,font=("times new roman",20,"bold"),bd =3,bg="white",cursor="hand2").pack(side=TOP,fill=X)
-        btn_Donasi = Button(LeftMenu,text="Donasi",command=self.Donasi_btn,font=("times new roman",20,"bold"),bd =3,bg="white",cursor="hand2").pack(side=TOP,fill=X)
-        btn_Donatur = Button(LeftMenu,text="Donatur",command=self.Donatur_btn,font=("times new roman",20,"bold"),bd =3,bg="white",cursor="hand2").pack(side=TOP,fill=X)
-        btn_penerima = Button(LeftMenu,text="Penerima",command=self.Penerima_btn,font=("times new roman",20,"bold"),bd =3,bg="white",cursor="hand2").pack(side=TOP,fill=X)
+        lbl_Menu = Label(LeftMenu,text="MENU",font=("times new roman",15,"bold"),bd =3,bg="green").pack(side=TOP,fill=X)
+        btn_Pegawai = Button(LeftMenu,text="Pegawai",command=self.employee,font=("times new roman",15,"bold"),bd =3,bg="white",cursor="hand2").pack(side=TOP,fill=X)
+        btn_kotakAmal = Button(LeftMenu,text="Kotak Amal",command=self.Kotak_amal,font=("times new roman",15,"bold"),bd =3,bg="white",cursor="hand2").pack(side=TOP,fill=X)
+        btn_Donasi = Button(LeftMenu,text="Donasi",command=self.Donasi_btn,font=("times new roman",15,"bold"),bd =3,bg="white",cursor="hand2").pack(side=TOP,fill=X)
+        btn_Donatur = Button(LeftMenu,text="Donatur",command=self.Donatur_btn,font=("times new roman",15,"bold"),bd =3,bg="white",cursor="hand2").pack(side=TOP,fill=X)
+        btn_penerima = Button(LeftMenu,text="Penerima",command=self.Penerima_btn,font=("times new roman",15,"bold"),bd =3,bg="white",cursor="hand2").pack(side=TOP,fill=X)
 
-        self.Menu_Utama = Frame(self.window,bd=2,relief=RIDGE, bg="white").place(x=200,y=70,width=1710,height=1080)
+        self.Menu_Utama = Frame(self.window,bd=2,relief=RIDGE, bg="white").place(x=150,y=70,width=1710,height=1080)
         btn_update=Button(LeftMenu,text="Update Diagram",command=self.diagram,font = ("times new roman",15,"bold"),bg="blue",cursor="hand2",fg="white").pack(side=TOP,fill=X)
         self.diagram()
         
@@ -79,10 +81,10 @@ class Dashboard:
         }
         df1 = DataFrame(data1,columns=['Tanggal','Jumlah Donasi'])
 
-        figure1 = plt.Figure(figsize=(4,6), dpi=100)
+        figure1 = plt.Figure(figsize=(1,1), dpi=100)
         ax1 = figure1.add_subplot(111)
         line1 = FigureCanvasTkAgg(figure1, self.Menu_Utama)
-        line1.get_tk_widget().place(x=200,y=70,width=1700,height=400)
+        line1.get_tk_widget().place(x=160,y=70,width=1200,height=350)
         df1 = df1[['Tanggal','Jumlah Donasi']].groupby('Tanggal').sum()
         df1.plot(kind='line', legend=True, ax=ax1, color='b',marker='o', fontsize=10)
         ax1.set_title('Kegiatan donasi 10 hari terakhir')
@@ -100,10 +102,10 @@ class Dashboard:
         data2 = {'Experience': list_experience,'Banyak Pegawai': list_jumlahexp}
         df2 = DataFrame(data2,columns=['Experience','Banyak Pegawai'])
 
-        figure2 = plt.Figure(figsize=(3,3), dpi=100)
+        figure2 = plt.Figure(figsize=(1,1), dpi=100)
         ax2 = figure2.add_subplot(111)
         bar2 = FigureCanvasTkAgg(figure2, self.Menu_Utama)
-        bar2.get_tk_widget().place(x=320,y=500,width=600,height=400) 
+        bar2.get_tk_widget().place(x=300,y=450,width=300,height=200) 
         df2 = df2[['Experience','Banyak Pegawai']].groupby('Experience').sum()
         df2.plot(kind='bar', legend=True, ax=ax2)
         ax2.set_title('Jumlah Experience Pegawai')
@@ -118,11 +120,11 @@ class Dashboard:
                 jumlah_jenis.append(i[0][0])
                 jenis_barang.append(i[0][1])
 
-        figure3 = plt.Figure(figsize=(3,3), dpi=100) # create a figure object 
+        figure3 = plt.Figure(figsize=(1,1), dpi=100) # create a figure object 
         ax3 = figure3.add_subplot(111) # add an Axes to the figure
         ax3.pie(jumlah_jenis, radius=1, labels=jenis_barang,autopct='%0.2f%%', shadow=True,)
         chart1 = FigureCanvasTkAgg(figure3,self.Menu_Utama)
-        chart1.get_tk_widget().place(x=1000,y=500,width=600,height=400)
+        chart1.get_tk_widget().place(x=800,y=450,width=300,height=200)
         ax3.set_title('Persentase Jenis Barang')
 
 

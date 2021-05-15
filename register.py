@@ -6,7 +6,7 @@ from conector import dbregis as dbregis
 class register_badan:
     def __init__(self,window):
         self.window = window
-        self.window.geometry("540x480+600+250")
+        self.window.geometry("540x480+300+150")
         self.window.title("Register Badan Amal")
         self.window.resizable (False,False)
         self.window.config(bg="white")
@@ -63,7 +63,7 @@ class register_badan:
 class register_donasi:
     def __init__(self,window):
         self.window = window
-        self.window.geometry("540x600+600+250")
+        self.window.geometry("540x600+400+50")
         self.window.title("Register Donatur")
         self.window.resizable (False,False)
         self.window.config(bg="white")

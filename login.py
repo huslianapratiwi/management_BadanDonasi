@@ -11,7 +11,7 @@ class login_amal:
     def __init__(self,window):
         top = 50
         self.window = window
-        self.window.geometry("400x260+700+400")
+        self.window.geometry("400x260+450+230")
         self.window.title("Login Badan Amal")
         self.window.resizable (False,False)
         self.window.config(bg="white")

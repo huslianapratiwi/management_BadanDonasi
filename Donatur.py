@@ -11,7 +11,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 class donatur:
     def __init__(self,window,id_dntr):
         self.window = window
-        self.window.geometry("1920x1080+0+0")
+        self.window.geometry("1280x720+0+0")
         self.window.title("Donatur")
         self.window.resizable (False,False)
         self.window.config(bg="white")
@@ -19,17 +19,17 @@ class donatur:
         temp = dbdonatur.getnama(id_dntr)
         self.nama = temp[0][0].split(" ")
 
-        title=Label(self.window,text = "Selamat Datang " + self.nama[0],font=("times new roman",40,"bold"),bg = "green",fg = "white").place(x = 0, y = 0,relwidth = 1,height = 70)
+        title=Label(self.window,text = "Selamat Datang " + self.nama[0],font=("times new roman",30,"bold"),bg = "green",fg = "white").place(x = 0, y = 0,relwidth = 1,height = 70)
 
         LeftMenu = Frame(self.window,bd=2,relief=RIDGE, bg="white")
-        LeftMenu.place(x=0,y=70,width=200,height=900)
+        LeftMenu.place(x=0,y=70,width=150,height=900)
 
-        lbl_Menu = Label(LeftMenu,text="MENU",font=("times new roman",20,"bold"),bd =3,bg="yellow",fg="black").pack(side=TOP,fill=X)
-        btn_Uang = Button(LeftMenu,text="Uang",command=self.uang,font=("times new roman",20,"bold"),bd =3,bg="white",cursor="hand2").pack(side=TOP,fill=X)
-        btn_Barang = Button(LeftMenu,text="Barang",command=self.barang,font=("times new roman",20,"bold"),bd =3,bg="white",cursor="hand2").pack(side=TOP,fill=X)
-        btn_riwayat = Button(LeftMenu,text="Riwayat Donasi",command=self.riwayat,font=("times new roman",20,"bold"),bd =3,bg="white",cursor="hand2").pack(side=TOP,fill=X)
+        lbl_Menu = Label(LeftMenu,text="MENU",font=("times new roman",15,"bold"),bd =3,bg="yellow",fg="black").pack(side=TOP,fill=X)
+        btn_Uang = Button(LeftMenu,text="Uang",command=self.uang,font=("times new roman",15,"bold"),bd =3,bg="white",cursor="hand2").pack(side=TOP,fill=X)
+        btn_Barang = Button(LeftMenu,text="Barang",command=self.barang,font=("times new roman",15,"bold"),bd =3,bg="white",cursor="hand2").pack(side=TOP,fill=X)
+        btn_riwayat = Button(LeftMenu,text="Riwayat Donasi",command=self.riwayat,font=("times new roman",15,"bold"),bd =3,bg="white",cursor="hand2").pack(side=TOP,fill=X)
         
-        self.Menu_Utama = Frame(self.window,bd=2,relief=RIDGE, bg="white").place(x=200,y=70,width=1710,height=1080)
+        self.Menu_Utama = Frame(self.window,bd=2,relief=RIDGE, bg="white").place(x=150,y=70,width=1710,height=1080)
         btn_update=Button(LeftMenu,text="Update Table",command=self.diagram,font = ("times new roman",15,"bold"),bg="blue",cursor="hand2",fg="white").pack(side=TOP,fill=X)
         self.diagram()
         
@@ -64,10 +64,10 @@ class donatur:
         }
         df1 = DataFrame(data1,columns=['Tanggal','Jumlah Donasi'])
 
-        figure1 = plt.Figure(figsize=(4,6), dpi=100)
+        figure1 = plt.Figure(figsize=(1,1), dpi=100)
         ax1 = figure1.add_subplot(111)
         line1 = FigureCanvasTkAgg(figure1, self.Menu_Utama)
-        line1.get_tk_widget().place(x=200,y=70,width=1700,height=400)
+        line1.get_tk_widget().place(x=160,y=70,width=1200,height=350)
         df1 = df1[['Tanggal','Jumlah Donasi']].groupby('Tanggal').sum()
         df1.plot(kind='line', legend=True, ax=ax1, color='b',marker='o', fontsize=10)
         ax1.set_title('Kegiatan donasi 10 hari terakhir')
@@ -82,11 +82,11 @@ class donatur:
                 jumlah_jenis.append(i[0][0])
                 jenis_barang.append(i[0][1])
 
-        figure3 = plt.Figure(figsize=(3,3), dpi=100) # create a figure object 
+        figure3 = plt.Figure(figsize=(1,1), dpi=100) # create a figure object 
         ax3 = figure3.add_subplot(111) # add an Axes to the figure
         ax3.pie(jumlah_jenis, radius=1, labels=jenis_barang,autopct='%0.2f%%')
         chart1 = FigureCanvasTkAgg(figure3,self.Menu_Utama)
-        chart1.get_tk_widget().place(x=300,y=500,width=500,height=500)
+        chart1.get_tk_widget().place(x=300,y=450,width=300,height=200) 
         ax3.set_title('Persentase Jenis Barang')
 
     
